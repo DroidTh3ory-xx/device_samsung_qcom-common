@@ -146,28 +146,6 @@ static void cm_power_hint(struct power_module *module, power_hint_t hint,
     int duration = 1;
 
     switch (hint) {
-    case POWER_HINT_INTERACTION:
-    case POWER_HINT_CPU_BOOST:
-        if (boostpulse_open(cm) >= 0) {
-            if (data != NULL)
-                duration = (int) data;
-
-            snprintf(buf, sizeof(buf), "%d", duration);
-            len = write(cm->boostpulse_fd, buf, strlen(buf));
-
-            if (len < 0) {
-                strerror_r(errno, buf, sizeof(buf));
-	            ALOGE("Error writing to boostpulse: %s\n", buf);
-
-                pthread_mutex_lock(&cm->lock);
-                close(cm->boostpulse_fd);
-                cm->boostpulse_fd = -1;
-                cm->boostpulse_warned = 0;
-                pthread_mutex_unlock(&cm->lock);
-            }
-        }
-        break;
-
     case POWER_HINT_VSYNC:
         break;
 
